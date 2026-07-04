@@ -1,0 +1,27 @@
+# Env / secrets
+.env
+.env.local
+
+# Java / Maven
+target/
+*.class
+*.jar
+!.mvn/wrapper/maven-wrapper.jar
+
+# Node / Angular
+node_modules/
+dist/
+.angular/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# OS / shell artifacts
+*.stackdump
+.DS_Store
+Thumbs.db
+
+# Recordings (large binaries, not versioned)
+.recordings/
