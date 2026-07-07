@@ -1,0 +1,111 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./db/init:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  auth-service:
+    build:
+      context: .
+      dockerfile: docker/backend.Dockerfile
+      args:
+        SERVICE: auth-service
+        PORT: 8081
+    environment:
+      AUTH_DB_URL: ${AUTH_DB_URL}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRATION_MS: ${JWT_EXPIRATION_MS}
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  user-service:
+    build:
+      context: .
+      dockerfile: docker/backend.Dockerfile
+      args:
+        SERVICE: user-service
+        PORT: 8082
+    environment:
+      USER_DB_URL: ${USER_DB_URL}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  contracts-service:
+    build:
+      context: .
+      dockerfile: docker/backend.Dockerfile
+      args:
+        SERVICE: contracts-service
+        PORT: 8083
+    environment:
+      CONTRACTS_DB_URL: ${CONTRACTS_DB_URL}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      R2_ACCOUNT_ID: ${R2_ACCOUNT_ID}
+      R2_ACCESS_KEY_ID: ${R2_ACCESS_KEY_ID}
+      R2_SECRET_ACCESS_KEY: ${R2_SECRET_ACCESS_KEY}
+      R2_BUCKET_NAME: ${R2_BUCKET_NAME}
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  ai-analysis-service:
+    build:
+      context: .
+      dockerfile: docker/backend.Dockerfile
+      args:
+        SERVICE: ai-analysis-service
+        PORT: 8084
+    environment:
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+      ANTHROPIC_MODEL: ${ANTHROPIC_MODEL}
+
+  gateway:
+    build:
+      context: .
+      dockerfile: docker/backend.Dockerfile
+      args:
+        SERVICE: gateway
+        PORT: 8080
+    environment:
+      AUTH_SERVICE_URL: http://auth-service:8081
+      USER_SERVICE_URL: http://user-service:8082
+      CONTRACTS_SERVICE_URL: http://contracts-service:8083
+    ports:
+      - "8080:8080"
+    depends_on:
+      - auth-service
+      - user-service
+      - contracts-service
+
+  frontend:
+    build:
+      context: .
+      dockerfile: docker/frontend.Dockerfile
+    environment:
+      FRONTEND_ORIGIN: ${FRONTEND_ORIGIN}
+    ports:
+      - "4200:80"
+    depends_on:
+      - gateway
+
+volumes:
+  pgdata:

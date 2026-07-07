@@ -1,0 +1,23 @@
+server:
+  port: ${SERVER_PORT:8083}
+
+spring:
+  application:
+    name: contracts-service
+  datasource:
+    url: ${CONTRACTS_DB_URL:jdbc:postgresql://localhost:5432/contracts_db}
+    username: ${POSTGRES_USER:mizan_user}
+    password: ${POSTGRES_PASSWORD:changeme}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: never

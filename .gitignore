@@ -2,6 +2,9 @@
 .env
 .env.local
 
+# Local-only port remap (machine-specific)
+docker-compose.override.yml
+
 # Java / Maven
 target/
 *.class
