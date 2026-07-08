@@ -41,6 +41,31 @@
         <artifactId>mizan-common</artifactId>
         <version>${project.version}</version>
       </dependency>
+      <!-- CVE-2025-14813 (CRITICAL): spring-security-rsa (via spring-cloud-starter) pulls
+           bcprov-jdk18on 1.78; pin to the lowest version Trivy lists as fixed. -->
+      <dependency>
+        <groupId>org.bouncycastle</groupId>
+        <artifactId>bcprov-jdk18on</artifactId>
+        <version>1.80.2</version>
+      </dependency>
+      <!-- CVE-2025-24813 and 3 other CRITICAL CVEs: Spring Boot 3.3.4 manages embedded Tomcat
+           at 10.1.30. Pin the whole matched set to the latest 10.1.x patch (all embed-* artifacts
+           must share one version). -->
+      <dependency>
+        <groupId>org.apache.tomcat.embed</groupId>
+        <artifactId>tomcat-embed-core</artifactId>
+        <version>10.1.57</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.tomcat.embed</groupId>
+        <artifactId>tomcat-embed-el</artifactId>
+        <version>10.1.57</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.tomcat.embed</groupId>
+        <artifactId>tomcat-embed-websocket</artifactId>
+        <version>10.1.57</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
