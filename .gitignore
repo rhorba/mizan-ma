@@ -1,6 +1,8 @@
 # Env / secrets
 .env
 .env.local
+k8s/**/*-secret.yaml
+!k8s/**/*-secret.example.yaml
 
 # Local-only port remap (machine-specific)
 docker-compose.override.yml
