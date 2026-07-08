@@ -3,7 +3,6 @@ package ma.mizan.contracts.domain;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
@@ -12,16 +11,14 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import ma.mizan.common.persistence.UuidEntity;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 @Entity
 @Table(name = "analysis_results")
-public class AnalysisResult {
-
-	@Id
-	private UUID id;
+public class AnalysisResult extends UuidEntity {
 
 	@OneToOne
 	@JoinColumn(name = "contract_id", nullable = false, unique = true)
@@ -48,15 +45,11 @@ public class AnalysisResult {
 	}
 
 	public AnalysisResult(Contract contract, String language, String summary, String rawResponse) {
-		this.id = UUID.randomUUID();
+		super(UUID.randomUUID());
 		this.contract = contract;
 		this.language = language;
 		this.summary = summary;
 		this.rawResponse = rawResponse;
-	}
-
-	public UUID getId() {
-		return id;
 	}
 
 	public String getLanguage() {

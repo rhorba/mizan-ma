@@ -1,0 +1,48 @@
+<div class="detail-header">
+  <a routerLink="/dashboard" class="back-link">← Back</a>
+  @if (contract()) {
+    <h2>{{ contract()!.fileName }}</h2>
+  }
+</div>
+
+<div class="detail-content">
+  @if (loading()) {
+    <mat-progress-bar mode="indeterminate" />
+  } @else if (errorMessage()) {
+    <p class="error-message">{{ errorMessage() }}</p>
+  } @else if (contract()?.status === 'FAILED') {
+    <p class="error-message">
+      Couldn't analyze this contract — the PDF may be scanned/image-only with no readable text.
+    </p>
+  } @else if (contract()?.status !== 'COMPLETE') {
+    <p class="status-text">Analysis in progress…</p>
+  } @else {
+    <section class="summary">
+      <h3>Summary</h3>
+      <p>{{ contract()!.summary }}</p>
+    </section>
+
+    <section class="clauses">
+      <h3>Clauses</h3>
+      <mat-accordion>
+        @for (flag of contract()!.clauseFlags; track flag.clauseText) {
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                <mat-chip [class]="riskClass(flag.riskLevel)">{{ flag.riskLevel }}</mat-chip>
+                <span class="clause-preview">{{ flag.clauseText }}</span>
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+            <p><strong>Original text:</strong> {{ flag.clauseText }}</p>
+            <p><strong>Explanation:</strong> {{ flag.explanation }}</p>
+            @if (flag.suggestedCorrection) {
+              <p><strong>Suggested correction:</strong> {{ flag.suggestedCorrection }}</p>
+            }
+          </mat-expansion-panel>
+        }
+      </mat-accordion>
+    </section>
+  }
+</div>
+
+<app-disclaimer-banner />

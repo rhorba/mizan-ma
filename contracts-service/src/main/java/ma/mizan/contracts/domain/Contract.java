@@ -5,20 +5,17 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.time.Instant;
 import java.util.UUID;
+import ma.mizan.common.persistence.UuidEntity;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 @Table(name = "contracts")
-public class Contract {
-
-	@Id
-	private UUID id;
+public class Contract extends UuidEntity {
 
 	@Column(name = "user_id", nullable = false)
 	private UUID userId;
@@ -51,14 +48,10 @@ public class Contract {
 	}
 
 	public Contract(UUID userId, String fileName, String r2ObjectKey) {
-		this.id = UUID.randomUUID();
+		super(UUID.randomUUID());
 		this.userId = userId;
 		this.fileName = fileName;
 		this.r2ObjectKey = r2ObjectKey;
-	}
-
-	public UUID getId() {
-		return id;
 	}
 
 	public UUID getUserId() {

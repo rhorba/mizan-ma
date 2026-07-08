@@ -4,20 +4,17 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.Instant;
 import java.util.UUID;
+import ma.mizan.common.persistence.UuidEntity;
 import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
 @Table(name = "clause_flags")
-public class ClauseFlag {
-
-	@Id
-	private UUID id;
+public class ClauseFlag extends UuidEntity {
 
 	@ManyToOne
 	@JoinColumn(name = "analysis_result_id", nullable = false)
@@ -44,7 +41,7 @@ public class ClauseFlag {
 	}
 
 	public ClauseFlag(String clauseText, RiskLevel riskLevel, String explanation, String suggestedCorrection) {
-		this.id = UUID.randomUUID();
+		super(UUID.randomUUID());
 		this.clauseText = clauseText;
 		this.riskLevel = riskLevel;
 		this.explanation = explanation;

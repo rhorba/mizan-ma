@@ -1,0 +1,50 @@
+<div class="upload-page">
+  <a routerLink="/dashboard" class="back-link">← Back</a>
+
+  <mat-card class="upload-card">
+    <mat-card-header>
+      <mat-card-title>Upload Contract</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="dropzone" role="group" aria-label="PDF file selector">
+        <input
+          type="file"
+          accept="application/pdf"
+          (change)="onFileSelected($event)"
+          aria-label="Choose a PDF contract to upload"
+        />
+        @if (selectedFile()) {
+          <p class="file-name">{{ selectedFile()!.name }}</p>
+        }
+      </div>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Language</mat-label>
+        <mat-select [value]="language()" (selectionChange)="language.set($event.value)">
+          <mat-option value="fr">Français</mat-option>
+          <mat-option value="ar">العربية</mat-option>
+          <mat-option value="ary">الدارجة</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      @if (uploading()) {
+        <mat-progress-bar mode="indeterminate" />
+        <p class="status-text">Uploading and analyzing…</p>
+      }
+
+      @if (errorMessage()) {
+        <p class="error-message">{{ errorMessage() }}</p>
+      }
+
+      <button
+        mat-flat-button
+        color="primary"
+        class="full-width"
+        [disabled]="!selectedFile() || uploading()"
+        (click)="submit()"
+      >
+        Submit
+      </button>
+    </mat-card-content>
+  </mat-card>
+</div>

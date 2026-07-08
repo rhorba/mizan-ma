@@ -129,7 +129,7 @@ class ContractControllerIntegrationTest {
 		mockMvc.perform(
 				multipart("/api/v1/contracts").file(file).header(InternalHeaders.USER_ID, UUID.randomUUID().toString()))
 				.andExpect(status().isCreated()).andExpect(jsonPath("$.status").value("COMPLETE"))
-				.andExpect(jsonPath("$.fileName").value("lease.pdf"));
+				.andExpect(jsonPath("$.fileName").value("lease.pdf")).andExpect(jsonPath("$.createdAt").isNotEmpty());
 	}
 
 	@Test

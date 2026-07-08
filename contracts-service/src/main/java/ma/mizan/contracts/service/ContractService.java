@@ -47,7 +47,14 @@ public class ContractService {
 		r2StorageService.upload(objectKey, pdfBytes, "application/pdf");
 
 		Contract contract = new Contract(userId, file.getOriginalFilename(), objectKey);
-		contractRepository.save(contract);
+		// Flush immediately so @CreationTimestamp populates createdAt before we build
+		// the response DTO below. Persistable.isNew() (UuidEntity) makes this a real
+		// persist(), so `contract` stays the managed instance — every mutation
+		// runAnalysis
+		// makes below (status, analysisResult) is picked up by dirty-checking at
+		// commit,
+		// including on the FAILED paths, with no further explicit save() needed.
+		contract = contractRepository.saveAndFlush(contract);
 
 		runAnalysis(contract, pdfBytes, language);
 
@@ -109,7 +116,6 @@ public class ContractService {
 			}
 			contract.attachAnalysisResult(analysisResult);
 			contract.setStatus(ContractStatus.COMPLETE);
-			contractRepository.save(contract);
 		} catch (AiAnalysisException e) {
 			contract.setStatus(ContractStatus.FAILED);
 		}

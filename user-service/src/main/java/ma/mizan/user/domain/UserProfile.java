@@ -2,19 +2,16 @@ package ma.mizan.user.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.time.Instant;
 import java.util.UUID;
+import ma.mizan.common.persistence.UuidEntity;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 @Table(name = "user_profiles")
-public class UserProfile {
-
-	@Id
-	private UUID id;
+public class UserProfile extends UuidEntity {
 
 	@Column(name = "user_id", nullable = false, unique = true)
 	private UUID userId;
@@ -40,7 +37,7 @@ public class UserProfile {
 	}
 
 	public UserProfile(UUID userId, String displayName) {
-		this.id = UUID.randomUUID();
+		super(UUID.randomUUID());
 		this.userId = userId;
 		this.displayName = displayName;
 	}

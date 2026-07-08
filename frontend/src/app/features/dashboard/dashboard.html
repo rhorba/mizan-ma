@@ -1,0 +1,52 @@
+<mat-toolbar color="primary">
+  <span>Mizan.ma</span>
+  <span class="spacer"></span>
+  <button mat-button (click)="logout()">Logout</button>
+</mat-toolbar>
+
+<div class="dashboard-content">
+  <button mat-flat-button color="primary" routerLink="/contracts/upload">
+    <mat-icon>upload_file</mat-icon>
+    Upload Contract
+  </button>
+
+  @if (loading()) {
+    <mat-progress-bar mode="indeterminate" class="loading-bar" />
+  } @else if (errorMessage()) {
+    <p class="error-message">
+      {{ errorMessage() }}
+      <button mat-button (click)="loadContracts()">Retry</button>
+    </p>
+  } @else if (contracts().length === 0) {
+    <p class="empty-state">No contracts yet — upload your first PDF.</p>
+  } @else {
+    <table mat-table [dataSource]="contracts()" class="contracts-table">
+      <ng-container matColumnDef="fileName">
+        <th mat-header-cell *matHeaderCellDef>Contract Name</th>
+        <td mat-cell *matCellDef="let contract">{{ contract.fileName }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>Status</th>
+        <td mat-cell *matCellDef="let contract">
+          <mat-chip [class]="statusClass(contract.status)">{{ contract.status }}</mat-chip>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="createdAt">
+        <th mat-header-cell *matHeaderCellDef>Date</th>
+        <td mat-cell *matCellDef="let contract">{{ contract.createdAt | date: 'short' }}</td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr
+        mat-row
+        *matRowDef="let contract; columns: displayedColumns"
+        class="clickable-row"
+        (click)="openContract(contract.id)"
+      ></tr>
+    </table>
+  }
+</div>
+
+<app-disclaimer-banner />
