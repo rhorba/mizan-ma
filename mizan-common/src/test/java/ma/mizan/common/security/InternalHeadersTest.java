@@ -12,6 +12,7 @@ class InternalHeadersTest {
 	void exposesExpectedHeaderNames() {
 		assertEquals("X-User-Id", InternalHeaders.USER_ID);
 		assertEquals("X-User-Role", InternalHeaders.USER_ROLE);
+		assertEquals("X-Internal-Token", InternalHeaders.INTERNAL_TOKEN);
 	}
 
 	@Test

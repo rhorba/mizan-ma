@@ -1,0 +1,6 @@
+internal:
+  service-token: test-only-internal-token
+
+anthropic:
+  api-key: test-only-api-key
+  model: claude-sonnet-4-6

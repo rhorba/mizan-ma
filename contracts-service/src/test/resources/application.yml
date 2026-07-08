@@ -1,0 +1,7 @@
+r2:
+  access-key-id: test-access-key
+  secret-access-key: test-secret-key
+  bucket-name: test-contracts
+
+internal:
+  service-token: test-only-internal-token

@@ -12,6 +12,25 @@ spring:
     hibernate:
       ddl-auto: validate
     open-in-view: false
+  servlet:
+    multipart:
+      max-file-size: ${CONTRACT_MAX_FILE_SIZE_MB:20}MB
+      max-request-size: ${CONTRACT_MAX_FILE_SIZE_MB:20}MB
+
+r2:
+  endpoint-url: ${R2_ENDPOINT_URL}
+  access-key-id: ${R2_ACCESS_KEY_ID}
+  secret-access-key: ${R2_SECRET_ACCESS_KEY}
+  bucket-name: ${R2_BUCKET_NAME}
+
+contracts:
+  max-file-size-mb: ${CONTRACT_MAX_FILE_SIZE_MB:20}
+
+ai-analysis:
+  service-url: ${AI_ANALYSIS_SERVICE_URL:http://localhost:8084}
+
+internal:
+  service-token: ${INTERNAL_SERVICE_TOKEN}
 
 management:
   endpoints:
