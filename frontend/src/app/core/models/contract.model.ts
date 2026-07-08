@@ -23,3 +23,8 @@ export interface ContractDetail {
   summary: string | null;
   clauseFlags: ClauseFlag[];
 }
+
+export interface ContractStats {
+  byStatus: Record<string, number>;
+  byRiskLevel: Record<string, number>;
+}

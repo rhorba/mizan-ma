@@ -38,6 +38,11 @@ class ContractsExceptionHandler {
 		return error(HttpStatus.FORBIDDEN, "FORBIDDEN", ex.getMessage());
 	}
 
+	@ExceptionHandler(AdminAccessRequiredException.class)
+	ResponseEntity<ErrorResponse> handleAdminRequired(AdminAccessRequiredException ex) {
+		return error(HttpStatus.FORBIDDEN, "FORBIDDEN", ex.getMessage());
+	}
+
 	private ResponseEntity<ErrorResponse> error(HttpStatus status, String code, String message) {
 		var apiError = new ApiError(code, message, UUID.randomUUID().toString());
 		return ResponseEntity.status(status).body(ErrorResponse.of(apiError));

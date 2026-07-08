@@ -1,0 +1,27 @@
+.stats-content {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.stats-table {
+  width: 100%;
+
+  td {
+    padding: 4px 8px;
+  }
+
+  td:last-child {
+    text-align: right;
+    font-weight: 500;
+  }
+}
+
+.empty-state,
+.error-message {
+  text-align: center;
+  color: var(--mat-sys-on-surface-variant, #5f5f5f);
+}

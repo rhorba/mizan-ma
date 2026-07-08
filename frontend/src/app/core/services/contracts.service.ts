@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { ContractDetail, ContractSummary } from '../models/contract.model';
+import { ContractDetail, ContractStats, ContractSummary } from '../models/contract.model';
 
 @Injectable({ providedIn: 'root' })
 export class ContractsService {
@@ -25,5 +25,9 @@ export class ContractsService {
 
   delete(id: string): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/${id}`);
+  }
+
+  stats(): Observable<ContractStats> {
+    return this.http.get<ContractStats>(`${this.baseUrl}/stats`);
   }
 }

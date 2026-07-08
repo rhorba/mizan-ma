@@ -43,4 +43,9 @@ describe('ContractsService', () => {
     service.delete('contract-1').subscribe();
     httpMock.expectOne(`${environment.apiBaseUrl}/contracts/contract-1`).flush(null);
   });
+
+  it('gets aggregate stats', () => {
+    service.stats().subscribe();
+    httpMock.expectOne(`${environment.apiBaseUrl}/contracts/stats`).flush({ byStatus: {}, byRiskLevel: {} });
+  });
 });

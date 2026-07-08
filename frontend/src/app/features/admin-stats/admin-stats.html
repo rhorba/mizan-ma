@@ -1,0 +1,58 @@
+<mat-toolbar color="primary">
+  <span>Admin — Usage &amp; Flag Stats</span>
+</mat-toolbar>
+
+<div class="stats-content">
+  @if (loading()) {
+    <mat-progress-bar mode="indeterminate" />
+  } @else if (errorMessage()) {
+    <p class="error-message">
+      {{ errorMessage() }}
+      <button (click)="loadStats()">Retry</button>
+    </p>
+  } @else if (stats(); as data) {
+    <mat-card class="stats-card">
+      <mat-card-header>
+        <mat-card-title>Contracts by Status</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        @if (hasData(data.byStatus)) {
+          <table class="stats-table">
+            <tbody>
+              @for (entry of data.byStatus | keyvalue; track entry.key) {
+                <tr>
+                  <td>{{ entry.key }}</td>
+                  <td>{{ entry.value }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        } @else {
+          <p class="empty-state">No data yet</p>
+        }
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stats-card">
+      <mat-card-header>
+        <mat-card-title>Flagged Clauses by Risk Level</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        @if (hasData(data.byRiskLevel)) {
+          <table class="stats-table">
+            <tbody>
+              @for (entry of data.byRiskLevel | keyvalue; track entry.key) {
+                <tr>
+                  <td>{{ entry.key }}</td>
+                  <td>{{ entry.value }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        } @else {
+          <p class="empty-state">No data yet</p>
+        }
+      </mat-card-content>
+    </mat-card>
+  }
+</div>
