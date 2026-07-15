@@ -99,3 +99,6 @@ Cleaned up: deleted test pod, `kind delete cluster --name mizan-staging-test`.
 ## 2026-07-15 — CI GREEN, Sprint 3 pushed
 Pushed 5 commits to origin/main (a88bafd, 954a40f, fee08a0, f2bc44d, 6af1cdb). CI run 29392058083: 11/11 jobs green on first attempt — no fix cycle needed (matches Sprint 2's pattern). Coverage gates (backend JaCoCo, frontend Vitest) both passed at the enforced 80% threshold; security scan (Semgrep/Trivy/Gitleaks) clean; all 6 images built and scanned.
 **Sprint 3 (Stories 3.3, 4.1, 4.2) is SHIPPED.**
+
+## 2026-07-15 — Batch 1 (coverage hardening) CI GREEN
+CI run 29403325673: 11/11 jobs green on first attempt. Batch 1 of Sprint 3 close-out is complete and pushed (6552c56). Moving to Batch 2 (Playwright video recording).
