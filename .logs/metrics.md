@@ -14,3 +14,6 @@ Went beyond the bare 80% CI gate to close real gaps in error/validation paths (p
 - ai-analysis-service: line 83.5% → 91.1%, method 87.0% → 100% (new tests: AiAnalysisExceptionHandlerTest x3, AnthropicApiExceptionTest x2)
 - frontend: branch 98.36% → 99.18% (upload.ts file-picker-cancelled edge case now covered, was previously untested — now 100% on that file)
 Note: local JDK is 25, which broke Mockito.mock() for several classes (ByteBuddy doesn't yet support Java 25 bytecode) — CI runs on JDK 21 so this wouldn't have surfaced there, but rewrote the 3 affected tests to use real objects (reflection-built MethodParameter, BeanPropertyBindingResult, a hand-written MultipartFile test double) instead of mocks, so they're not relying on that environment gap either way.
+
+## SPRINT_SNAPSHOT — 2026-07-15 (Sprint 3, close-out complete)
+All Sprint 3 scope now shipped: stories 3.3/4.1/4.2, coverage hardening (see COVERAGE_HARDENING entry above), and E2E video recording (5 scenarios, .recordings/v0.3-2026-07-15/). CI green across all 3 commits in this close-out (6552c56, 550c9a2, f9532b7). No Sprint 4 defined in docs/stories-mizan.md — next steps pending user direction.

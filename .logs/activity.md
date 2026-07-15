@@ -112,3 +112,6 @@ Set up Playwright E2E (frontend/e2e/) against the full Docker Compose stack (rea
 - admin-stats-view.webm — ADMIN-promoted account (no public registration path creates ADMIN, so test setup promotes via direct SQL) views usage/flag stats
 Test user setup (frontend/e2e/global-setup.ts): registers real users via the live auth API, promotes one to ADMIN via `docker compose exec postgres psql`. All 5 tests pass.
 **Known gap, called out explicitly rather than hidden**: no scenario shows a successful (COMPLETE) AI analysis, since that requires a real Anthropic API key which this environment doesn't have. The upload→analysis error path is fully covered; the success path is not yet demonstrated end-to-end.
+
+## 2026-07-15 — Batch 2 CI GREEN — Sprint 3 close-out fully complete
+CI run 29426938138: 11/11 jobs green (confirmed Vitest doesn't pick up the new e2e/*.spec.ts files, and ESLint passes on them, before pushing). Sprint 3 (Stories 3.3, 4.1, 4.2 + video recording + coverage hardening) is now genuinely done — every item from the stories doc's Sprint 3 line is shipped, tested, and on origin/main.
