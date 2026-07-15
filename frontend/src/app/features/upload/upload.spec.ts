@@ -50,6 +50,16 @@ describe('Upload', () => {
     expect(component.selectedFile()?.name).toBe('lease.pdf');
   });
 
+  it('clears the selected file when the file picker is cancelled (no files chosen)', () => {
+    const input = document.createElement('input');
+    Object.defineProperty(input, 'files', { value: [] });
+
+    component.onFileSelected({ target: input } as unknown as Event);
+    fixture.detectChanges();
+
+    expect(component.selectedFile()).toBeNull();
+  });
+
   it('navigates to the contract on successful upload', () => {
     const navigateSpy = vi.spyOn(router, 'navigate');
     const file = new File(['%PDF-1.4'], 'lease.pdf', { type: 'application/pdf' });
