@@ -102,3 +102,13 @@ Pushed 5 commits to origin/main (a88bafd, 954a40f, fee08a0, f2bc44d, 6af1cdb). C
 
 ## 2026-07-15 — Batch 1 (coverage hardening) CI GREEN
 CI run 29403325673: 11/11 jobs green on first attempt. Batch 1 of Sprint 3 close-out is complete and pushed (6552c56). Moving to Batch 2 (Playwright video recording).
+
+## VIDEO_RECORDED — 2026-07-15 (v0.3, Sprint 3 close-out)
+Set up Playwright E2E (frontend/e2e/) against the full Docker Compose stack (real backend + gateway + postgres, not mocks). 5 scenarios recorded to `.recordings/v0.3-2026-07-15/`:
+- login-success.webm — registered user signs in, lands on dashboard
+- login-invalid-password.webm — wrong password rejected with error message, stays on /login
+- contract-upload-and-analysis.webm — PDF upload → analysis attempted → contract detail page. Ends in FAILED status: real app behavior given the placeholder ANTHROPIC_API_KEY in this environment (user's explicit decision, see .logs/decisions.md) — not a stub or mock.
+- dashboard-contract-history.webm — uploaded contract appears in the dashboard history table with its FAILED status chip
+- admin-stats-view.webm — ADMIN-promoted account (no public registration path creates ADMIN, so test setup promotes via direct SQL) views usage/flag stats
+Test user setup (frontend/e2e/global-setup.ts): registers real users via the live auth API, promotes one to ADMIN via `docker compose exec postgres psql`. All 5 tests pass.
+**Known gap, called out explicitly rather than hidden**: no scenario shows a successful (COMPLETE) AI analysis, since that requires a real Anthropic API key which this environment doesn't have. The upload→analysis error path is fully covered; the success path is not yet demonstrated end-to-end.

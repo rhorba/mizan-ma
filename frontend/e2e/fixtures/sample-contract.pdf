@@ -1,0 +1,7 @@
+%PDF-1.4
+This is a deliberately minimal file for E2E testing: it passes PdfValidator's
+mime-type + magic-byte check (starts with "%PDF-") but is not a structurally
+valid PDF, so PdfTextExtractor (Apache PDFBox) fails to parse it and the
+contract is correctly marked FAILED by ContractService — exercising the real
+error-handling path end-to-end, consistent with the placeholder Anthropic key
+used in this environment.

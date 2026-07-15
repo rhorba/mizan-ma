@@ -16,3 +16,6 @@ Toolchain check: Java 25 (Temurin) present, no global Maven -> will generate Mav
 
 ## 2026-07-15 — Sprint 3 close-out scope
 User chose to complete both remaining Sprint 3 items now (not defer): E2E/video recording (CLAUDE.md rule 9) and coverage hardening beyond the bare 80% CI gate, before treating Sprint 3 as fully closed and discussing what's next (no Sprint 4 defined in stories doc).
+
+## 2026-07-15 — AI analysis E2E recording uses placeholder Anthropic key
+`.env`'s ANTHROPIC_API_KEY is a placeholder (17 chars, not a real key). User chose to record the upload flow as-is rather than pause for a real key: the E2E video will show upload succeeding and the contract landing in FAILED status via the real upstream-error handling path, not a successful analysis. This is genuine app behavior (the error path), not a stub.
