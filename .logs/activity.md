@@ -86,3 +86,12 @@ Backend: `GET /api/v1/contracts/stats` (contracts-service) aggregates contract c
 Frontend: minimal `/admin/stats` page — two simple tables (status counts, risk-level counts), not a chart library. Deliberately skipped `ngx-charts` (mentioned as an option in docs/ui-mizan.md) since Story 4.1 is "Could" priority and a table already satisfies "aggregate counts... returned and rendered" — adding a charting dependency for two small tables would be YAGNI.
 Verified: contracts-service integration test (non-admin -> 403, admin -> correct aggregate counts) — needed the same LocalStack + `r2.endpoint-url` dynamic-property wiring as the other contracts-service test classes (missed it on the first pass, same class of setup gap as Story 3.3's live-testing findings). Full reactor `./mvnw verify` green, contracts-service 90.9% line coverage. Frontend `ng lint` clean, `ng test` 39 tests passing, coverage 97.4%/98.4%/84.9%/99.6%.
 Live-verified against the rebuilt Docker stack: promoted the test user to ADMIN directly in the DB (registration can only ever create INDIVIDUAL/BUSINESS by design, per Story 2.1's privilege-escalation fix — this was a one-off manual DB edit for testing, not an app-level bypass) — confirmed `GET /contracts/stats` returns real aggregate data as ADMIN and 403s for a plain INDIVIDUAL user.
+
+## 2026-07-15 — Story 4.2 VERIFY complete, Sprint 3 batch ready to ship
+Recreated `kind` cluster (`mizan-staging-test`) per last session's plan: installed ingress-nginx, loaded all 6 local images, applied `k8s/staging/` manifests. All 9 pods reached Ready with no repeat of the prior startupProbe issue (fix holds).
+NetworkPolicy verification (the one item left open from last session): spun up a throwaway `curlimages/curl` pod inside `mizan-staging` namespace.
+- `gateway:8080/actuator/health` → HTTP 200 immediately (allowed, as expected).
+- `auth-service:8080/actuator/health` direct → curl exit 28 (timeout after 6s) — blocked, as expected.
+- `postgres:5432` direct (`nc -zv`) → timeout — blocked, as expected (bonus check beyond the planned scope, since it's the most sensitive target).
+Cleaned up: deleted test pod, `kind delete cluster --name mizan-staging-test`.
+**Story 4.2 is now COMPLETE.** Sprint 3 (3.3, 4.1, 4.2) is functionally done — proceeding to push per rule 7 and CI monitoring per rule 11.
