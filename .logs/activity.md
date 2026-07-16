@@ -123,3 +123,10 @@ Full manual verification against the live stack, both via curl through the real 
 Extended `frontend/e2e/` with `register.spec.ts` (full register→verify→login scenario, plus an unverified-login-is-rejected scenario) and a shared `verification.ts` helper that reads the dev-only logged verification link via `docker compose logs auth-service` (Playwright has no way to read server logs or the hashed DB token directly — same constraint noted at the end of Sprint 3). Also fixed `global-setup.ts`, whose seeded test users would otherwise fail every other e2e spec now that `register()` no longer auto-verifies — added a `verifyEmailViaApi()` call after each seed registration. Full local e2e suite: 7/7 passing (up from 5).
 Full `./mvnw verify` across all 6 backend modules: BUILD SUCCESS, all coverage-check gates pass. Frontend `ng lint`: clean. Frontend `ng test`: 59/59 passing, 94% statement coverage (well above the 80% gate).
 Committed locally (cc07865, 49 files). Updated `docs/stories-mizan.md` — added Story 2.4 under Epic 2 and a Sprint 4 row to the sprint allocation table (Sprint 3 was the last one previously listed). Push to origin deferred pending user confirmation per this session's safety protocol on shared-state actions — CLAUDE.md rule 7 (push at end of sprint) still applies once confirmed.
+
+## PUSH — 2026-07-16
+Branch: main | Commits: e3af5e2..2ce11c3 (cc07865 feat, 2ce11c3 docs) | Remote: https://github.com/rhorba/mizan-ma.git | Content: Sprint 4 Story 2.4 (register UI + mandatory email verification)
+User confirmed the push explicitly before it ran, per this session's shared-state-action safety protocol.
+
+## 2026-07-16 — CI GREEN — Sprint 4 Story 2.4 shipped
+CI run 29525474777: 11/11 jobs green on first attempt (lint x2, frontend test+coverage gate, security scan, frontend image build, backend test+coverage gate, 5 backend service image builds). No fix cycle needed. **Sprint 4 (Story 2.4) is SHIPPED.**
