@@ -103,6 +103,33 @@ Scenario: Update language preference
 
 ---
 
+### Story 2.4: Register UI & mandatory email verification
+**Priority**: Must | **Size**: M | **Specialist**: Backend Dev / Frontend Dev
+
+**Description**: As a new user, I want to create an account through a Register page and verify my email address, so that the app has no unauthenticated write path and Register (missing entirely until this story, despite being in the original PRD) actually exists.
+
+**Acceptance Criteria**:
+```gherkin
+Scenario: Registration requires verification before login
+  Given a new user registers with a valid email/password/role
+  When they attempt to log in before clicking the verification link
+  Then 403 EMAIL_NOT_VERIFIED is returned and login is refused
+
+Scenario: Verifying activates the account
+  Given a registered but unverified user
+  When they POST /api/v1/auth/verify-email with their token
+  Then the account is marked verified and they can subsequently log in
+
+Scenario: Resend does not leak account existence
+  Given an email address with no account, or an already-verified account
+  When POST /api/v1/auth/resend-verification is called
+  Then the endpoint no-ops silently (204) rather than revealing account state
+```
+**Technical Notes**: Generic SMTP via Spring Boot Mail (not a SendGrid/Resend API integration) — user's explicit choice. `LOG_VERIFICATION_LINKS=true` is a dev-only fallback (never true outside local/dev) that logs the raw verification link at WARN level when real SMTP credentials aren't configured. Resend is cooldown-limited (60s). Includes a password strength meter and ToS acceptance checkbox on the Register page.
+**Dependencies**: 2.1, 2.2
+
+---
+
 ## Epic 3: Contract Upload & Analysis
 
 ### Story 3.1: PDF upload + storage (contracts-service + R2)
@@ -209,3 +236,4 @@ Scenario: Deploy to staging
 | Sprint 1 | 1.1, 1.2, 1.3, 2.1, 2.2 | ~4-5 days |
 | Sprint 2 | 2.3, 3.1, 3.2, 3.4 | ~5-6 days |
 | Sprint 3 | 3.3, 4.1, 4.2 (+ E2E/video recording, coverage hardening) | ~4-5 days |
+| Sprint 4 | 2.4 | ~2-3 days |
