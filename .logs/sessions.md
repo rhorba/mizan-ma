@@ -80,3 +80,20 @@ Exact next steps, in order:
 9. Log the ship and the push to .logs/activity.md.
 
 Repo and environment state at session end: nothing from Part 2 is committed — git status shows roughly 20 modified files and 13 new files, all intentional, no stray changes. The local Docker Compose stack is up: auth-service is unhealthy for the known, safe reason above (the app itself works fine, only the health probe is wrong), gateway is healthy but running stale code missing the public-paths fix, and every other service (contracts, user, ai-analysis, frontend, postgres, localstack) is healthy and untouched by this session. Docker Desktop is running, having been started fresh at the very beginning of this session. The local .env has LOG_VERIFICATION_LINKS=true and placeholder SMTP credentials, which is intentional for this machine and matches the pattern documented in .env.example.
+
+## SESSION_END — 2026-07-16 (Sprint 4 Story 2.4 fully shipped, CI green, pushed)
+Resumed exactly from the prior session's 9-step plan and completed all of it in order.
+
+Done this session:
+- Docker Desktop had reset (was not running at session start) — started fresh, brought the full 8-container compose stack up.
+- Applied the one remaining fix from last session: `management.health.mail.enabled: false` in auth-service's application.yml. The gateway's public-paths fix was already in the source from last session, just not yet deployed.
+- Rebuilt and redeployed `auth-service` and `gateway`. Manual curl verification through the real gateway (port **8085**, not 8080 — this machine has atlas-events permanently bound to 8080, see memory) confirmed the full flow: register (201) → login blocked (403 EMAIL_NOT_VERIFIED) → verify-email (204) → login succeeds (200). auth-service `/actuator/health` now reports UP.
+- Manually drove the actual UI in a browser (localhost:4201) for the first time this feature has ever been visually checked. Found and fixed a real gap along the way: `frontend` hadn't been rebuilt, so the running container was serving a stale bundle without the `/register`/`/verify-email` routes at all (Angular `NG04002` route-not-found) — rebuilt it, then confirmed register form (including the password strength meter and ToS checkbox), the "check your email" interstitial, the verify-email success page, and login-after-verification landing on the dashboard, all work correctly end to end.
+- Extended `frontend/e2e/` with `register.spec.ts` (register→verify→login, plus an unverified-login-is-rejected scenario) and a shared `verification.ts` helper that reads the dev-only logged verification link via `docker compose logs auth-service` (Playwright can't read server logs or the hashed DB token directly). Also fixed `global-setup.ts` — its seeded users would otherwise fail every other e2e spec now that `register()` no longer auto-verifies. Full e2e suite: 7/7 passing.
+- Full `./mvnw verify` across all 6 backend modules: BUILD SUCCESS, all coverage gates pass. `ng lint`: clean. `ng test`: 59/59 passing, 94% coverage.
+- Updated `docs/stories-mizan.md` (Story 2.4 under Epic 2, Sprint 4 row).
+- Committed in 3 pieces (cc07865 feat, 2ce11c3 docs/stories+activity, a642b81 docs/CI-green-log), asked for and got explicit user confirmation before each push (this session's operating mode treats `git push` as a shared-state action requiring per-action confirmation, not a standing CLAUDE.md-rule-7 blanket approval). CI run 29525474777: **11/11 jobs green on the first attempt.**
+
+Current state: working tree clean, `origin/main` fully in sync (0 ahead/behind), local Docker Compose stack up and healthy (all 8 containers, `frontend`/`auth-service`/`gateway` all running current code). Docker Desktop left running.
+
+Next: Per `docs/stories-mizan.md`, Sprint 4 (Story 2.4) is now the only entry in Sprint 4 and it's done — there is no Sprint 5 defined yet. Next session should open by asking the user what's next (candidates not yet scoped: real SMTP credentials to replace `LOG_VERIFICATION_LINKS=true`, a real `ANTHROPIC_API_KEY` to finally record a successful AI-analysis E2E path — flagged as a gap since Sprint 3 — or a genuinely new feature).
