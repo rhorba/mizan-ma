@@ -20,6 +20,26 @@
           <p class="error-message">{{ errorMessage() }}</p>
         }
 
+        @if (emailNotVerified()) {
+          <p class="error-message">
+            Please verify your email before signing in.
+            @if (resendState() === 'sent') {
+              A new verification email has been sent.
+            } @else if (resendState() === 'cooldown') {
+              A verification email was already sent recently — check your inbox.
+            } @else {
+              <button
+                mat-button
+                type="button"
+                (click)="resend()"
+                [disabled]="resendState() === 'sending'"
+              >
+                Resend verification email
+              </button>
+            }
+          </p>
+        }
+
         <button
           mat-flat-button
           color="primary"
@@ -33,6 +53,8 @@
             Sign in
           }
         </button>
+
+        <p class="switch-link">New here? <a routerLink="/register">Create an account</a></p>
       </form>
     </mat-card-content>
   </mat-card>

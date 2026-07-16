@@ -6,6 +6,8 @@ import ma.mizan.auth.controller.dto.LoginRequest;
 import ma.mizan.auth.controller.dto.RefreshRequest;
 import ma.mizan.auth.controller.dto.RegisterRequest;
 import ma.mizan.auth.controller.dto.RegisterResponse;
+import ma.mizan.auth.controller.dto.ResendVerificationRequest;
+import ma.mizan.auth.controller.dto.VerifyEmailRequest;
 import ma.mizan.auth.service.AuthService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -44,5 +46,17 @@ public class AuthController {
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void logout(@Valid @RequestBody RefreshRequest request) {
 		authService.logout(request.refreshToken());
+	}
+
+	@PostMapping("/verify-email")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void verifyEmail(@Valid @RequestBody VerifyEmailRequest request) {
+		authService.verifyEmail(request.token());
+	}
+
+	@PostMapping("/resend-verification")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void resendVerification(@Valid @RequestBody ResendVerificationRequest request) {
+		authService.resendVerification(request.email());
 	}
 }

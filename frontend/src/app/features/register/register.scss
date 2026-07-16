@@ -1,0 +1,69 @@
+.register-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 16px;
+}
+
+.register-card {
+  width: 100%;
+  max-width: 400px;
+}
+
+.full-width {
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+.submit-button {
+  margin-top: 8px;
+}
+
+.error-message {
+  color: var(--mat-sys-error, #b3261e);
+  font-size: 0.875rem;
+  margin: 0 0 8px;
+}
+
+.hint-message {
+  font-size: 0.875rem;
+  opacity: 0.8;
+}
+
+.switch-link {
+  text-align: center;
+  font-size: 0.875rem;
+  margin-top: 12px;
+}
+
+.strength-meter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+
+  mat-progress-bar {
+    flex: 1;
+  }
+
+  .strength-label {
+    font-size: 0.75rem;
+    white-space: nowrap;
+    min-width: 64px;
+  }
+
+  mat-progress-bar.strength-0,
+  mat-progress-bar.strength-1 {
+    --mdc-linear-progress-active-indicator-color: #b3261e;
+  }
+  mat-progress-bar.strength-2 {
+    --mdc-linear-progress-active-indicator-color: #e8a33d;
+  }
+  mat-progress-bar.strength-3 {
+    --mdc-linear-progress-active-indicator-color: #4a90d9;
+  }
+  mat-progress-bar.strength-4 {
+    --mdc-linear-progress-active-indicator-color: #2e7d32;
+  }
+}

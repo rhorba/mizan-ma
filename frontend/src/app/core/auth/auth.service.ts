@@ -10,6 +10,8 @@ interface AuthResponse {
   expiresInMs: number;
 }
 
+export type RegistrableRole = 'INDIVIDUAL' | 'BUSINESS';
+
 const ACCESS_TOKEN_KEY = 'mizan_access_token';
 const REFRESH_TOKEN_KEY = 'mizan_refresh_token';
 
@@ -31,6 +33,22 @@ export class AuthService {
         tap((response) => this.storeTokens(response)),
         map(() => undefined),
       );
+  }
+
+  register(email: string, password: string, role: RegistrableRole): Observable<void> {
+    return this.http
+      .post(`${environment.apiBaseUrl}/auth/register`, { email, password, role })
+      .pipe(map(() => undefined));
+  }
+
+  verifyEmail(token: string): Observable<void> {
+    return this.http.post(`${environment.apiBaseUrl}/auth/verify-email`, { token }).pipe(map(() => undefined));
+  }
+
+  resendVerification(email: string): Observable<void> {
+    return this.http
+      .post(`${environment.apiBaseUrl}/auth/resend-verification`, { email })
+      .pipe(map(() => undefined));
   }
 
   logout(): void {

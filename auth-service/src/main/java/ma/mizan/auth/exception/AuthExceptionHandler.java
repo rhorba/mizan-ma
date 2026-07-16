@@ -29,6 +29,21 @@ class AuthExceptionHandler {
 		return error(HttpStatus.UNAUTHORIZED, "INVALID_REFRESH_TOKEN", ex.getMessage());
 	}
 
+	@ExceptionHandler(EmailNotVerifiedException.class)
+	ResponseEntity<ErrorResponse> handleEmailNotVerified(EmailNotVerifiedException ex) {
+		return error(HttpStatus.FORBIDDEN, "EMAIL_NOT_VERIFIED", ex.getMessage());
+	}
+
+	@ExceptionHandler(InvalidVerificationTokenException.class)
+	ResponseEntity<ErrorResponse> handleInvalidVerificationToken(InvalidVerificationTokenException ex) {
+		return error(HttpStatus.BAD_REQUEST, "INVALID_VERIFICATION_TOKEN", ex.getMessage());
+	}
+
+	@ExceptionHandler(VerificationResendTooSoonException.class)
+	ResponseEntity<ErrorResponse> handleResendTooSoon(VerificationResendTooSoonException ex) {
+		return error(HttpStatus.TOO_MANY_REQUESTS, "VERIFICATION_RESEND_TOO_SOON", ex.getMessage());
+	}
+
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	ResponseEntity<ErrorResponse> handleValidation(MethodArgumentNotValidException ex) {
 		List<ErrorDetail> details = ex.getBindingResult().getFieldErrors().stream()

@@ -19,3 +19,12 @@ data:
   USER_SERVICE_URL: "http://user-service:8082"
   CONTRACTS_SERVICE_URL: "http://contracts-service:8083"
   FRONTEND_ORIGIN: "https://staging.mizan.ma"
+  SMTP_HOST: "changeme-smtp-host"
+  SMTP_PORT: "587"
+  SMTP_AUTH: "true"
+  SMTP_STARTTLS: "true"
+  MAIL_FROM_ADDRESS: "noreply@mizan.ma"
+  EMAIL_VERIFICATION_TOKEN_EXPIRATION_MS: "86400000"
+  VERIFICATION_RESEND_COOLDOWN_MS: "60000"
+  # Never "true" outside local dev — logs a live, usable verification link.
+  LOG_VERIFICATION_LINKS: "false"

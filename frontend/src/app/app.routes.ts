@@ -8,6 +8,18 @@ export const routes: Routes = [
     loadComponent: () => import('./features/login/login').then((m) => m.Login),
   },
   {
+    path: 'register',
+    loadComponent: () => import('./features/register/register').then((m) => m.Register),
+  },
+  {
+    path: 'verify-email',
+    loadComponent: () => import('./features/verify-email/verify-email').then((m) => m.VerifyEmail),
+  },
+  {
+    path: 'terms',
+    loadComponent: () => import('./features/terms/terms').then((m) => m.Terms),
+  },
+  {
     path: 'dashboard',
     loadComponent: () => import('./features/dashboard/dashboard').then((m) => m.Dashboard),
     canActivate: [authGuard],

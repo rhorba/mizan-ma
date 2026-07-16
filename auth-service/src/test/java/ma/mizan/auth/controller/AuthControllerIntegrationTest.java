@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Map;
+import ma.mizan.auth.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -33,6 +34,9 @@ class AuthControllerIntegrationTest {
 	@Autowired
 	private ObjectMapper objectMapper;
 
+	@Autowired
+	private UserRepository userRepository;
+
 	@Test
 	void registerThenLoginThenRefreshThenLogout() throws Exception {
 		String email = "alice@example.com";
@@ -42,6 +46,15 @@ class AuthControllerIntegrationTest {
 						Map.of("email", email, "password", "correct-horse-battery", "role", "INDIVIDUAL"))))
 				.andExpect(status().isCreated()).andExpect(jsonPath("$.id", notNullValue()))
 				.andExpect(jsonPath("$.email").value(email)).andExpect(jsonPath("$.role").value("INDIVIDUAL"));
+
+		// Verification-token delivery (email) is exercised separately in
+		// EmailVerificationIntegrationTest;
+		// this test is about the login/refresh/logout token lifecycle, so mark verified
+		// directly.
+		userRepository.findByEmail(email).ifPresent(user -> {
+			user.markEmailVerified();
+			userRepository.save(user);
+		});
 
 		String loginBody = mockMvc
 				.perform(post("/api/v1/auth/login").contentType(MediaType.APPLICATION_JSON).content(
@@ -91,6 +104,19 @@ class AuthControllerIntegrationTest {
 				.content(objectMapper.writeValueAsString(
 						Map.of("email", "carol@example.com", "password", "short", "role", "INDIVIDUAL"))))
 				.andExpect(status().isBadRequest()).andExpect(jsonPath("$.error.code").value("VALIDATION_ERROR"));
+	}
+
+	@Test
+	void loginRejectsUnverifiedEmail() throws Exception {
+		String email = "erin@example.com";
+		mockMvc.perform(post("/api/v1/auth/register").contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(
+						Map.of("email", email, "password", "correct-horse-battery", "role", "INDIVIDUAL"))))
+				.andExpect(status().isCreated());
+
+		mockMvc.perform(post("/api/v1/auth/login").contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(Map.of("email", email, "password", "correct-horse-battery"))))
+				.andExpect(status().isForbidden()).andExpect(jsonPath("$.error.code").value("EMAIL_NOT_VERIFIED"));
 	}
 
 	@Test

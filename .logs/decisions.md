@@ -19,3 +19,6 @@ User chose to complete both remaining Sprint 3 items now (not defer): E2E/video 
 
 ## 2026-07-15 — AI analysis E2E recording uses placeholder Anthropic key
 `.env`'s ANTHROPIC_API_KEY is a placeholder (17 chars, not a real key). User chose to record the upload flow as-is rather than pause for a real key: the E2E video will show upload succeeding and the contract landing in FAILED status via the real upstream-error handling path, not a successful analysis. This is genuine app behavior (the error path), not a stub.
+
+## 2026-07-15 — Sprint 4 scope: Register page
+Sprint 3 fully shipped, no Sprint 4 defined in stories doc. Audited the app against docs/prd-mizan.md's functional requirements to find real gaps rather than guessing. Found: no Register/Sign-up UI exists at all (auth.service.ts has no register() method, app.routes.ts has no /register route) — Story 3.3 only ever built Login. This is a P0 gap against FR-1 (no one can create an account through the web app). User confirmed Sprint 4 starts with Register page only (not bundling the also-identified accessibility audit gap).

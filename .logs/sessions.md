@@ -39,3 +39,44 @@ Next steps, in order:
 2. Mark Story 4.2 complete, log it, commit if there's any fix from step 1.
 3. Sprint 3 will then be fully complete (3.3, 4.1, 4.2) — push per CLAUDE.md rule 7 and monitor CI (rule 11) for all 3 pending local commits at once.
 4. Per `docs/stories-mizan.md`, Sprint 3 was the last planned sprint — after this push, check with the user on what's next (there's no Sprint 4 defined in the stories doc).
+
+## SESSION_END — 2026-07-15 (Sprint 3 close-out shipped; Sprint 4 Story 1 in progress, NOT committed)
+
+### Part 1 — Sprint 3 close-out (COMPLETE, pushed, CI green)
+Resumed from last session's one open item (Story 4.2 NetworkPolicy verification), completed it, then did the full close-out user asked for:
+- Story 4.2: recreated a `kind` cluster, confirmed NetworkPolicy blocks direct pod-to-pod access (gateway reachable, auth-service/postgres direct access blocked). Pushed with Story 3.3/4.1 (commits already local from last session).
+- Coverage hardening: closed real gaps in exception handlers, PDF validation, JPA persistence base class across ai-analysis-service, contracts-service, mizan-common, and the frontend's upload.ts. Hit a local-environment-only issue worth remembering for future backend test work on this machine: JDK 25 (installed locally) is too new for Mockito's inline mock maker — ByteBuddy doesn't support Java 25 bytecode yet. CI runs JDK 21 so it's unaffected there, but rewrote every affected test to avoid Mockito.mock() entirely (real objects, hand-written test doubles) rather than lean on that CI/local gap. This came up repeatedly across the session.
+- Playwright E2E suite added from scratch under frontend/e2e/, 5 scenarios recorded to .recordings/v0.3-2026-07-15/ against the real Docker Compose stack. Known accepted gap: the AI-analysis success path isn't recorded, since ANTHROPIC_API_KEY is still a placeholder.
+- All pushed, CI green throughout (5 separate green runs). Sprint 3 is fully done.
+
+### Part 2 — Sprint 4 kickoff: Register / email verification (IN PROGRESS, nothing committed)
+User picked this scope after an audit against the PRD found no Register UI exists at all anywhere in the app. Scope grew to "comprehensive" per user's explicit choice: email verification (blocks login until verified), a password strength meter, and ToS acceptance — this pulled in real backend work in auth-service, not just a frontend page.
+
+Key decisions locked in (full detail in .logs/decisions.md, itself uncommitted):
+- Generic SMTP via Spring Boot Mail, not a SendGrid/Resend API integration.
+- Unverified users are blocked from logging in at all (403 EMAIL_NOT_VERIFIED), not just nagged with a banner.
+- User explicitly chose to skip providing real SMTP credentials for now. LOG_VERIFICATION_LINKS=true in the local .env logs the raw verification link at WARN level instead, as a dev-only fallback — gated off by default, never true outside local/dev config.
+- A placeholder /terms page is linked from the ToS checkbox.
+
+What's built (all code written; backend fully unit/integration tested and green in isolation):
+- Backend (auth-service): V2 migration adding users.email_verified plus a new email_verification_tokens table, mirroring the existing refresh_tokens pattern exactly. New EmailVerificationToken entity/repo. New MailService, reusing RefreshTokenHasher for token generation/hashing. New endpoints POST /auth/verify-email and POST /auth/resend-verification (60s cooldown; silently no-ops for an unknown or already-verified email rather than erroring, so it doesn't become a second account-enumeration surface). register() no longer auto-logs-in the caller. login() now rejects unverified users. All new env vars wired into application.yml, docker-compose.yml, .env/.env.example, and the k8s staging ConfigMap/Secret template. 13 of 13 auth-service tests green as of the last full run (mvnw verify -pl mizan-common,auth-service -am), before the gateway fix described below.
+- Frontend: a /register page (password confirmation, a strength meter, account-type select, ToS checkbox, ending in a "check your email" interstitial rather than auto-login), a /verify-email page (reads the token query param, calls the endpoint, shows success or error), a placeholder /terms page, and a new EMAIL_NOT_VERIFIED state on the Login page with a resend action. 59 of 59 frontend tests green, lint clean, coverage around 94% (well above the 80% gate).
+
+Two real bugs were found during manual verification against the live Docker Compose stack — exactly why that verification step matters beyond unit tests:
+1. Fixed and tested, but NOT yet deployed to the running container: the Gateway's JwtAuthenticationFilter never allow-listed /api/v1/auth/verify-email or /api/v1/auth/resend-verification as public paths, so both endpoints returned 401 Missing bearer token even though they must be reachable by users who aren't authenticated yet. Fixed in gateway's JwtAuthenticationFilter.java, with a new regression test added and confirmed green (mvnw verify -pl mizan-common,gateway -am, 6 of 6 tests, BUILD SUCCESS). The running gateway container is still on the old image — needs a rebuild next session before re-testing.
+2. Diagnosed but not yet fixed: the auth-service container is currently reporting unhealthy (503 from /actuator/health). Root cause confirmed via container logs: adding spring-boot-starter-mail auto-configures Spring Boot Actuator's MailHealthIndicator, which actively tries to connect to the placeholder SMTP host as part of every health check, and connection-refused there drags the whole health status down. The fix is a single line: management.health.mail.enabled: false in auth-service's application.yml. Not applied yet.
+
+Manual verification so far, via curl through the real gateway, before bug #1 was found: register succeeded (201, correct response); login before verification correctly returned 403 EMAIL_NOT_VERIFIED; verify-email failed with 401 due to bug #1 (now fixed in code, not yet redeployed); login after that attempted verification still returned 403, which is the expected knock-on effect of verification never having actually succeeded.
+
+Exact next steps, in order:
+1. Add management.health.mail.enabled: false to auth-service's application.yml.
+2. Rebuild and restart both auth-service (for the health fix) and gateway (for the public-paths fix) in Docker Compose.
+3. Re-run the manual curl verification end to end — register, read the link from auth-service logs, verify-email, login — expect all steps to succeed this time.
+4. Manually click through the Register and Login pages in a real browser at http://localhost:4201 at least once — only curl/API has been exercised so far this session, the actual frontend UI has never been visually checked.
+5. Extend frontend/e2e/ with a register-to-verify-to-login Playwright scenario. This needs a decision on how the test will obtain the verification token, since Playwright can't read server-side logs directly — closing this also closes the "no successful path recorded" gap flagged in the Sprint 3 close-out video.
+6. Run a full mvnw verify across all backend modules together (not just auth-service and gateway in isolation) plus a full frontend ng test and ng lint, to catch any cross-module regression before committing.
+7. Commit backend, frontend, k8s manifests, and env files together as one coherent story, then push and monitor CI. The local JDK 25/Mockito issue should not reproduce on CI's JDK 21, but confirm.
+8. Update docs/stories-mizan.md to add this work as a real story under a new Sprint 4 section — there currently is no Sprint 4 in that document at all.
+9. Log the ship and the push to .logs/activity.md.
+
+Repo and environment state at session end: nothing from Part 2 is committed — git status shows roughly 20 modified files and 13 new files, all intentional, no stray changes. The local Docker Compose stack is up: auth-service is unhealthy for the known, safe reason above (the app itself works fine, only the health probe is wrong), gateway is healthy but running stale code missing the public-paths fix, and every other service (contracts, user, ai-analysis, frontend, postgres, localstack) is healthy and untouched by this session. Docker Desktop is running, having been started fresh at the very beginning of this session. The local .env has LOG_VERIFICATION_LINKS=true and placeholder SMTP credentials, which is intentional for this machine and matches the pattern documented in .env.example.

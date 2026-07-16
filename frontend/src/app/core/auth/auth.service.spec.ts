@@ -56,4 +56,25 @@ describe('AuthService', () => {
     service.logout();
     httpMock.expectNone(`${environment.apiBaseUrl}/auth/logout`);
   });
+
+  it('posts registration details with the chosen role', () => {
+    service.register('new@example.com', 'correct-horse-battery', 'BUSINESS').subscribe();
+    const req = httpMock.expectOne(`${environment.apiBaseUrl}/auth/register`);
+    expect(req.request.body).toEqual({ email: 'new@example.com', password: 'correct-horse-battery', role: 'BUSINESS' });
+    req.flush({ id: 'user-1', email: 'new@example.com', role: 'BUSINESS' });
+  });
+
+  it('posts the verification token', () => {
+    service.verifyEmail('raw-token').subscribe();
+    const req = httpMock.expectOne(`${environment.apiBaseUrl}/auth/verify-email`);
+    expect(req.request.body).toEqual({ token: 'raw-token' });
+    req.flush(null, { status: 204, statusText: 'No Content' });
+  });
+
+  it('posts the email for resend-verification', () => {
+    service.resendVerification('user@example.com').subscribe();
+    const req = httpMock.expectOne(`${environment.apiBaseUrl}/auth/resend-verification`);
+    expect(req.request.body).toEqual({ email: 'user@example.com' });
+    req.flush(null, { status: 204, statusText: 'No Content' });
+  });
 });

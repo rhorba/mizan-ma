@@ -66,4 +66,38 @@ describe('Login', () => {
     expect(component.loading()).toBe(false);
     expect(component.errorMessage()).toBe('Invalid email or password.');
   });
+
+  it('shows the verify-email prompt instead of a generic error for EMAIL_NOT_VERIFIED', () => {
+    component.form.setValue({ email: 'unverified@example.com', password: 'correct-horse-battery' });
+
+    component.submit();
+    fixture.detectChanges();
+    const req = httpMock.expectOne(`${environment.apiBaseUrl}/auth/login`);
+    req.flush({ error: { code: 'EMAIL_NOT_VERIFIED' } }, { status: 403, statusText: 'Forbidden' });
+    fixture.detectChanges();
+
+    expect(component.emailNotVerified()).toBe(true);
+    expect(component.errorMessage()).toBeNull();
+  });
+
+  it('resends the verification email using the entered address', () => {
+    component.form.setValue({ email: 'unverified@example.com', password: 'x' });
+
+    component.resend();
+    const req = httpMock.expectOne(`${environment.apiBaseUrl}/auth/resend-verification`);
+    expect(req.request.body).toEqual({ email: 'unverified@example.com' });
+    req.flush(null, { status: 204, statusText: 'No Content' });
+
+    expect(component.resendState()).toBe('sent');
+  });
+
+  it('treats a 429 resend response as a cooldown, not a failure', () => {
+    component.form.setValue({ email: 'unverified@example.com', password: 'x' });
+
+    component.resend();
+    const req = httpMock.expectOne(`${environment.apiBaseUrl}/auth/resend-verification`);
+    req.flush({ error: { code: 'VERIFICATION_RESEND_TOO_SOON' } }, { status: 429, statusText: 'Too Many Requests' });
+
+    expect(component.resendState()).toBe('cooldown');
+  });
 });

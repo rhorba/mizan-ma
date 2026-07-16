@@ -18,6 +18,27 @@ jwt:
   expiration-ms: ${JWT_EXPIRATION_MS:3600000}
   refresh-expiration-ms: ${JWT_REFRESH_EXPIRATION_MS:604800000}
 
+mail:
+  from-address: ${MAIL_FROM_ADDRESS:noreply@mizan.ma}
+
+app:
+  frontend-origin: ${FRONTEND_ORIGIN:http://localhost:4200}
+  email-verification-token-expiration-ms: ${EMAIL_VERIFICATION_TOKEN_EXPIRATION_MS:86400000}
+  verification-resend-cooldown-ms: ${VERIFICATION_RESEND_COOLDOWN_MS:60000}
+  log-verification-links: ${LOG_VERIFICATION_LINKS:false}
+
+spring.mail:
+  host: ${SMTP_HOST:localhost}
+  port: ${SMTP_PORT:1025}
+  username: ${SMTP_USERNAME:}
+  password: ${SMTP_PASSWORD:}
+  properties:
+    mail:
+      smtp:
+        auth: ${SMTP_AUTH:false}
+        starttls:
+          enable: ${SMTP_STARTTLS:false}
+
 management:
   endpoints:
     web:
@@ -26,3 +47,6 @@ management:
   endpoint:
     health:
       show-details: never
+  health:
+    mail:
+      enabled: false

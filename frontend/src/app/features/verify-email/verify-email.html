@@ -1,0 +1,22 @@
+<div class="verify-page">
+  <mat-card class="verify-card">
+    <mat-card-content>
+      @switch (status()) {
+        @case ('verifying') {
+          <mat-spinner diameter="32" />
+          <p>Verifying your email…</p>
+        }
+        @case ('success') {
+          <h2>Email verified</h2>
+          <p>Your account is active. You can now sign in.</p>
+          <a mat-flat-button color="primary" routerLink="/login">Sign in</a>
+        }
+        @case ('error') {
+          <h2>Verification failed</h2>
+          <p>This link is invalid, expired, or already used. Sign in and request a new one from there.</p>
+          <a mat-flat-button color="primary" routerLink="/login">Go to sign in</a>
+        }
+      }
+    </mat-card-content>
+  </mat-card>
+</div>

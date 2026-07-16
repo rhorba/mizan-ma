@@ -1,6 +1,7 @@
 import { execSync } from 'node:child_process';
 import { writeFileSync } from 'node:fs';
 import path from 'node:path';
+import { verifyEmailViaApi } from './verification';
 
 const API_BASE_URL = process.env['E2E_API_BASE_URL'] ?? 'http://localhost:8085/api/v1';
 const RUN_ID = Date.now();
@@ -41,7 +42,9 @@ export default async function globalSetup(): Promise<void> {
   const admin: TestUser = { email: `e2e-admin-${RUN_ID}@mizan.test`, password: 'E2ePassword123!' };
 
   await register(individual.email, individual.password);
+  await verifyEmailViaApi(individual.email);
   await register(admin.email, admin.password);
+  await verifyEmailViaApi(admin.email);
   promoteToAdmin(admin.email);
 
   const seeded: SeededUsers = { individual, admin };

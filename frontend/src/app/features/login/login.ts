@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -12,6 +12,7 @@ import { AuthService } from '../../core/auth/auth.service';
   selector: 'app-login',
   imports: [
     ReactiveFormsModule,
+    RouterLink,
     MatButtonModule,
     MatCardModule,
     MatFormFieldModule,
@@ -28,6 +29,8 @@ export class Login {
 
   readonly loading = signal(false);
   readonly errorMessage = signal<string | null>(null);
+  readonly emailNotVerified = signal(false);
+  readonly resendState = signal<'idle' | 'sending' | 'sent' | 'cooldown'>('idle');
 
   readonly form = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
@@ -40,16 +43,33 @@ export class Login {
     }
     this.loading.set(true);
     this.errorMessage.set(null);
+    this.emailNotVerified.set(false);
     const { email, password } = this.form.getRawValue();
     this.authService.login(email, password).subscribe({
       next: () => {
         this.loading.set(false);
         this.router.navigate(['/dashboard']);
       },
-      error: () => {
+      error: (err) => {
         this.loading.set(false);
-        this.errorMessage.set('Invalid email or password.');
+        if (err.error?.error?.code === 'EMAIL_NOT_VERIFIED') {
+          this.emailNotVerified.set(true);
+        } else {
+          this.errorMessage.set('Invalid email or password.');
+        }
       },
+    });
+  }
+
+  resend(): void {
+    const email = this.form.controls.email.value;
+    if (!email) {
+      return;
+    }
+    this.resendState.set('sending');
+    this.authService.resendVerification(email).subscribe({
+      next: () => this.resendState.set('sent'),
+      error: (err) => this.resendState.set(err.status === 429 ? 'cooldown' : 'idle'),
     });
   }
 }

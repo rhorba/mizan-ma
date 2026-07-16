@@ -2,3 +2,13 @@ jwt:
   secret: test-only-secret-key-not-used-outside-the-test-suite-1234567890
   expiration-ms: 3600000
   refresh-expiration-ms: 604800000
+
+mail:
+  from-address: test@mizan.ma
+
+app:
+  frontend-origin: http://localhost:4200
+
+spring.mail:
+  host: localhost
+  port: 1025

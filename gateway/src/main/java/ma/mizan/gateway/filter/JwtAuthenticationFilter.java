@@ -27,8 +27,8 @@ import reactor.core.publisher.Mono;
 /**
  * Validates the JWT for every request and forwards identity via trusted
  * internal headers (ADR-3) — downstream services never see or parse the token
- * themselves. Public auth endpoints (register/login/refresh) and actuator
- * health checks bypass validation.
+ * themselves. Public auth endpoints (register/login/refresh/verify-email/
+ * resend-verification) and actuator health checks bypass validation.
  *
  * <p>
  * Any client-supplied {@code X-User-Id}/{@code X-User-Role} header is always
@@ -40,7 +40,7 @@ import reactor.core.publisher.Mono;
 class JwtAuthenticationFilter implements GlobalFilter, Ordered {
 
 	private static final List<String> PUBLIC_PATHS = List.of("/api/v1/auth/register", "/api/v1/auth/login",
-			"/api/v1/auth/refresh", "/actuator/**");
+			"/api/v1/auth/refresh", "/api/v1/auth/verify-email", "/api/v1/auth/resend-verification", "/actuator/**");
 
 	private final AntPathMatcher pathMatcher = new AntPathMatcher();
 	private final JwtService jwtService;

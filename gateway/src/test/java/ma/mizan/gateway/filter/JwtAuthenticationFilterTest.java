@@ -43,6 +43,18 @@ class JwtAuthenticationFilterTest {
 	}
 
 	@Test
+	void publicVerifyEmailAndResendVerificationPathsBypassValidation() {
+		for (String path : new String[]{"/api/v1/auth/verify-email", "/api/v1/auth/resend-verification"}) {
+			forwardedRequest.set(null);
+			var exchange = MockServerWebExchange.from(MockServerHttpRequest.post(path));
+
+			filter.filter(exchange, capturingChain()).block();
+
+			assertThat(forwardedRequest.get()).as("path %s should bypass JWT validation", path).isNotNull();
+		}
+	}
+
+	@Test
 	void protectedPathWithoutTokenReturns401() {
 		var exchange = MockServerWebExchange.from(MockServerHttpRequest.get("/api/v1/contracts"));
 

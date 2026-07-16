@@ -28,6 +28,9 @@ public class User extends UuidEntity {
 	@Column(name = "is_active", nullable = false)
 	private boolean active = true;
 
+	@Column(name = "email_verified", nullable = false)
+	private boolean emailVerified = false;
+
 	@CreationTimestamp
 	@Column(name = "created_at", nullable = false, updatable = false)
 	private Instant createdAt;
@@ -60,5 +63,13 @@ public class User extends UuidEntity {
 
 	public boolean isActive() {
 		return active;
+	}
+
+	public boolean isEmailVerified() {
+		return emailVerified;
+	}
+
+	public void markEmailVerified() {
+		this.emailVerified = true;
 	}
 }
