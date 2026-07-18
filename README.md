@@ -9,7 +9,7 @@ Legal counsel costs 500–2000 MAD per consultation. Most Moqawil/Kasb users ski
 Upload a contract PDF → Claude API summarizes clauses in Darija/French/Arabic, flags risky terms, suggests corrections. No legal advice — pure document analysis.
 
 ## Stack
-Java 21 (Spring Boot 3.x, microservices: auth-service, user-service, contracts-service, ai-analysis-service + Spring Cloud Gateway), Angular (latest) + Angular Material, PostgreSQL 16 (Spring Data JPA, database-per-service), Anthropic Claude API (claude-sonnet-4-6), Cloudflare R2 (PDF storage), Spring Security + JWT, Docker Compose (local) + Kubernetes (staging/prod)
+Java 21 (Spring Boot 3.x, microservices: auth-service, user-service, contracts-service, ai-analysis-service + Spring Cloud Gateway), Angular (latest) + Angular Material, PostgreSQL 16 (Spring Data JPA, database-per-service), Anthropic Claude API (claude-sonnet-5), Cloudflare R2 (PDF storage), Spring Security + JWT, Docker Compose (local) + Kubernetes (staging/prod)
 
 See `docs/` for full foundation documents (PRD, system design, architecture, security, database, UX, UI, test strategy, DevOps, stories).
 

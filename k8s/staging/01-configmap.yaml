@@ -11,7 +11,7 @@ data:
   CONTRACTS_DB_URL: "jdbc:postgresql://postgres:5432/contracts_db"
   JWT_EXPIRATION_MS: "3600000"
   JWT_REFRESH_EXPIRATION_MS: "604800000"
-  ANTHROPIC_MODEL: "claude-sonnet-4-6"
+  ANTHROPIC_MODEL: "claude-sonnet-5"
   R2_BUCKET_NAME: "mizan-contracts"
   CONTRACT_MAX_FILE_SIZE_MB: "20"
   AI_ANALYSIS_SERVICE_URL: "http://ai-analysis-service:8084"
