@@ -134,3 +134,10 @@ CI run 29525474777: 11/11 jobs green on first attempt (lint x2, frontend test+co
 ## 2026-07-17 — PUSH — session-end log synced
 Branch: main | Commit: a642b81..025ede1 (docs: log session end — Sprint 4 Story 2.4 shipped) | Remote: https://github.com/rhorba/mizan-ma.git
 User confirmed the push explicitly before it ran. origin/main now fully in sync with local.
+
+## 2026-07-18 — PUSH — ai-analysis-service model default bumped to claude-sonnet-5
+Branch: main | Commit: 025ede1..c59c07f (chore(ai-analysis): bump default Claude model to claude-sonnet-5) | Remote: https://github.com/rhorba/mizan-ma.git | Content: application.yml, .env.example, k8s/staging/01-configmap.yaml, README.md
+User confirmed the push explicitly before it ran (deferred from 2026-07-17 scoping session).
+
+## 2026-07-18 — CI GREEN — model default bump
+CI run 29639944664: 11/11 jobs green on first attempt (lint x2, frontend test+coverage gate, security scan, frontend image build, backend test+coverage gate, 5 backend service image builds). No fix cycle needed.
